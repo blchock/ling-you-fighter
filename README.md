@@ -72,3 +72,9 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/tr
 npx create-react-app ling-you-fighter
 npm install pixi.js
 npm install @inlet/react-pixi --save
+
+
+### doc
+http://pixijs.download/release/docs/index.html
+https://ant.design/docs/react/use-with-create-react-app-cn
+https://pixijs.io/examples/#/demos-basic/container.js
