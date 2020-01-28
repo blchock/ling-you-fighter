@@ -5,6 +5,8 @@ class Scene { //  extends React.Component
   constructor(color) {
     this.app = new PIXI.Application({ backgroundColor: color });
     this.containers = {};
+    this.call = {};
+    this.data = {};
     this.curSceneName = "";
   }
   getScene(name) {

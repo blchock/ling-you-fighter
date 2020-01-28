@@ -1,5 +1,6 @@
 import Text from '../utils/Text';
 import Sprite from '../utils/Sprite';
+import { Modal } from 'antd';
 const img = './res/Q_0002_g.png'
 class Entry {
   constructor(scene) {
@@ -9,54 +10,9 @@ class Entry {
     this.init();
   }
   registry() {
-    // import { Modal, Button } from 'antd';
-
-    // class App extends React.Component {
-    //   state = { visible: false };
-
-    //   showModal = () => {
-    //     this.setState({
-    //       visible: true,
-    //     });
-    //   };
-
-    //   handleOk = e => {
-    //     console.log(e);
-    //     this.setState({
-    //       visible: false,
-    //     });
-    //   };
-
-    //   handleCancel = e => {
-    //     console.log(e);
-    //     this.setState({
-    //       visible: false,
-    //     });
-    //   };
-
-    //   render() {
-    //     return (
-    //       <div>
-    //         <Button type="primary" onClick={this.showModal}>
-    //           Open Modal
-    //     </Button>
-    //         <Modal
-    //           title="Basic Modal"
-    //           visible={this.state.visible}
-    //           onOk={this.handleOk}
-    //           onCancel={this.handleCancel}
-    //         >
-    //           <p>Some contents...</p>
-    //           <p>Some contents...</p>
-    //           <p>Some contents...</p>
-    //         </Modal>
-    //       </div>
-    //     );
-    //   }
-    // }
-
-    // ReactDOM.render(<App />, mountNode);
+    this.sc.call.showRegDlg();
   }
+  
   init() {
     Sprite.create(this.sc, this.name, './bg/d462f7122d061de4061f351d4f0e6475.jpg', { x: 0, y: 0 })
     Text.create(this.sc, this.name, '灵佑大陆', { x: 30, y: 30 }, true);
