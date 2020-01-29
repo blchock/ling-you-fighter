@@ -51,6 +51,13 @@ class Scene { //  extends React.Component
   timer(func) {
     this.app.ticker.add(func); // (delta) => {}
   }
+  // storage
+  set(key,value) {
+    this.data[key] = value;
+  }
+ get(key) {
+    return this.data[key];
+  }
 }
 
 export default Scene;
