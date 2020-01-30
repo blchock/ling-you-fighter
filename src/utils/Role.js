@@ -30,7 +30,8 @@ class Role {
             level: args.level || 1,   // 等级
             exp: 0,     // 经验
             hp: 100,    // 血量
-            mp: 0       // 法力
+            mp: 0,      // 法力
+            gold: 0     // 财富
         }
         let weapon = {}
         switch (data.classical) {
@@ -130,6 +131,5 @@ class Role {
         return data.id
     }
 }
-
 
 export default Role;

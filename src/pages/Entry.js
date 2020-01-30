@@ -1,6 +1,7 @@
 import Text from '../utils/Text';
 import Sprite from '../utils/Sprite';
 import Role from '../utils/Role';
+import Story from '../utils/Story'
 import { message } from 'antd';
 const img = './res/Q_0002_g.png'
 let scene;
@@ -14,8 +15,15 @@ class Entry {
   begin(saveID) {
     let role = new Role(saveID);
     if (role.id) {
-      scene.hide(this.name);
-      this.me = role;
+      scene.set('me', role);
+      scene.call.inputDlg('选择故事', '故事名称', '输入(scripts目录下的)故事名称', (isOk, value) => {
+        if (isOk) {
+          scene.hide(this.name);
+          new Story(scene, value, (story) => {
+            story.start();
+          });
+        }
+      });
     } else {
       message.warn('没有找到存档！');
     }

@@ -10,7 +10,7 @@ class Scene { //  extends React.Component
     this.curSceneName = "";
   }
   getScene(name) {
-    if(this.curSceneName === "") return this.app.stage;
+    if (this.curSceneName === "") return this.app.stage;
     return this.containers[name || this.curSceneName];
   }
   // 场景显示
@@ -37,14 +37,14 @@ class Scene { //  extends React.Component
   }
   removeScene(name) {
     name = name || this.curSceneName
-    if(this.containers[name]) {
+    if (this.containers[name]) {
       this.app.stage.removeChild(this.containers[name]);
       this.containers[name] = undefined;
     }
   }
   remove(child, sceneName) {
     sceneName = sceneName || this.curSceneName
-    if(this.containers[sceneName]) {
+    if (this.containers[sceneName]) {
       this.containers[sceneName].removeChild(child);
     }
   }
@@ -52,10 +52,10 @@ class Scene { //  extends React.Component
     this.app.ticker.add(func); // (delta) => {}
   }
   // storage
-  set(key,value) {
+  set(key, value) {
     this.data[key] = value;
   }
- get(key) {
+  get(key) {
     return this.data[key];
   }
 }
