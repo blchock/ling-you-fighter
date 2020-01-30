@@ -1,5 +1,6 @@
 import Text from '../utils/Text';
 import Sprite from '../utils/Sprite';
+import Role from '../utils/Role';
 import { message } from 'antd';
 const img = './res/Q_0002_g.png'
 let scene;
@@ -11,11 +12,10 @@ class Entry {
     this.init();
   }
   begin(saveID) {
-    let dt = localStorage.getItem(saveID);
-    if (dt && dt.length > 0) {
-      let data = JSON.parse(dt)
-      console.log("enter", data);
+    let role = new Role(saveID);
+    if (role.id) {
       scene.hide(this.name);
+      this.me = role;
     } else {
       message.warn('没有找到存档！');
     }
@@ -26,71 +26,9 @@ class Entry {
       name: scene.get('rgd-name'),
       sex: scene.get('rgd-sex'),
       classical: scene.get('rgd-class'),
-      icon: `res/${scene.get('rgd-icon')}.png`,
-      level: 1,   // 等级
-      exp: 0,     // 经验
-      hp: 100,    // 血量
-      mp: 0       // 法力
+      icon: scene.get('rgd-icon')
     }
-    let weapon = {}
-    switch (data.classical) {
-      case 'mage': {
-        weapon.name = '水晶魔法杖';
-        weapon.attr = { // 武器能力
-          star: 1,
-          atk: Math.floor(Math.random() * 20) + 20,
-          def: 0
-        }
-        data.wisdom = Math.floor(Math.random() * 60) + 60; // 智慧
-        data.power = Math.floor(Math.random() * 30) + 0;   // 力量
-        data.speed = Math.floor(Math.random() * 50) + 30;  // 速度
-        data.resist = Math.floor(Math.random() * 30) + 0;  // 抵抗（防御）
-        data.mp = Math.floor(Math.random() * data.wisdom / 2) + data.wisdom // 法力
-        break
-      }
-      case 'warrior': {
-        weapon.name = '烈焰拳套';
-        weapon.attr = { // 武器能力
-          star: 1,
-          atk: Math.floor(Math.random() * 5) + 5,
-          def: Math.floor(Math.random() * 10) + 10,
-        }
-        data.wisdom = Math.floor(Math.random() * 30) + 0;
-        data.power = Math.floor(Math.random() * 60) + 60;
-        data.speed = Math.floor(Math.random() * 50) + 30;
-        data.resist = Math.floor(Math.random() * 80) + 30;
-        break
-      }
-      case 'swordsman': {
-        weapon.name = '青水流光剑';
-        weapon.attr = { // 武器能力
-          star: 1,
-          atk: Math.floor(Math.random() * 15) + 15,
-          def: Math.floor(Math.random() * 5) + 5
-        }
-        data.wisdom = Math.floor(Math.random() * 50) + 50;
-        data.power = Math.floor(Math.random() * 50) + 60;
-        data.speed = Math.floor(Math.random() * 50) + 50;
-        data.resist = Math.floor(Math.random() * 50) + 20;
-        data.mp = 60 // 法力
-        break
-      }
-      case 'assassin': {
-        weapon.name = '鱼肠';
-        weapon.attr = { // 武器能力
-          star: 1,
-          atk: Math.floor(Math.random() * 30) + 10,
-          def: 0
-        }
-        data.wisdom = Math.floor(Math.random() * 40) + 0;
-        data.power = Math.floor(Math.random() * 80) + 40;
-        data.speed = Math.floor(Math.random() * 60) + 60;
-        data.resist = Math.floor(Math.random() * 30) + 10;
-        break
-      }
-    }
-    localStorage.setItem(data.id, JSON.stringify(data));
-    return data.id
+    return Role.create(data);
   }
 
   init() {
@@ -111,9 +49,9 @@ class Entry {
           self.begin(id);
         }
       });
-  });
+    });
 
-}
+  }
 }
 
 export default Entry;
