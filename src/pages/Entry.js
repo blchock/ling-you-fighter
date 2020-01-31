@@ -1,9 +1,8 @@
 import Text from '../utils/Text';
 import Sprite from '../utils/Sprite';
 import Role from '../utils/Role';
-import Story from '../utils/Story'
-import { message } from 'antd';
-const img = './res/Q_0002_g.png'
+import Story from '../utils/Story';
+import { message, notification } from 'antd';
 let scene;
 class Entry {
   constructor(sc) {
@@ -16,13 +15,10 @@ class Entry {
     let role = new Role(saveID);
     if (role.id) {
       scene.set('me', role);
-      scene.call.inputDlg('选择故事', '故事名称', '输入(scripts目录下的)故事名称', (isOk, value) => {
-        if (isOk) {
-          scene.hide(this.name);
-          new Story(scene, value, (story) => {
-            story.start();
-          });
-        }
+      notification.open({message: '温馨提示',description: '在游戏中按[~]键可以打开游戏菜单',style: {width:280,marginLeft: 120}});
+      scene.hide(this.name);
+      new Story(scene, role.chapter.file, (story) => {
+        story.start(role);
       });
     } else {
       message.warn('没有找到存档！');

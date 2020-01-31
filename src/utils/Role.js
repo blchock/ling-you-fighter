@@ -7,8 +7,40 @@ class Role {
             for (const key in data) { // 赋值
                 this[key] = data[key];
             }
+            this.color = '#' + Math.random().toString(16).substr(2, 6).toUpperCase();
             console.log("load:", this);
         }
+    }
+    save() {
+        localStorage.setItem(this.id, JSON.stringify(this));
+    }
+    getMaxHp() {
+        return Role.maxHp(this.level, this.resist);
+    }
+    getMaxMp() {
+        return Role.maxMp(this.level, this.wisdom);
+    }
+    getMaxExp() {
+        return Math.pow(this.level, 4) + 88;
+    }
+    getHpValue(v) {
+        return Math.ceil(this.hp / this.getMaxHp() * v);
+    }
+    getMpValue(v) {
+        return Math.ceil(this.mp / this.getMaxMp() * v);
+    }
+    getExpValue(v) {
+        return Math.ceil(this.exp / this.getMaxExp() * v);
+    }
+    getClassicalName() {
+        let names = {mage:'法师',warrior:'战士',swordsman:'剑客',assassin:'刺客',monster:'士兵',boss:'BOSS',mageboss:'BOSS'}
+        return names[this.classical];
+    }
+    static maxHp(level, resist) {
+        return Math.pow(level, 3) * resist + 100
+    }
+    static maxMp(level, wisdom) {
+        return Math.pow(level, 2) * wisdom
     }
     /**
      * 创建角色
@@ -29,9 +61,14 @@ class Role {
             icon: args.icon,
             level: args.level || 1,   // 等级
             exp: 0,     // 经验
-            hp: 100,    // 血量
-            mp: 0,      // 法力
-            gold: 0     // 财富
+            gold: 0,    // 财富
+            mineral: 0, // 矿石（用于武器升星）
+            chapter: {  // 剧本
+                file: '赵云传',
+                chapter: 0,
+                line: 0,
+                pid: 0
+            }
         }
         let weapon = {}
         switch (data.classical) {
@@ -45,8 +82,7 @@ class Role {
                 data.wisdom = Math.floor(Math.random() * 60) + 60; // 智慧
                 data.power = Math.floor(Math.random() * 30) + 0;   // 力量
                 data.speed = Math.floor(Math.random() * 50) + 30;  // 速度
-                data.resist = Math.floor(Math.random() * 30) + 0;  // 抵抗（防御）
-                data.mp = Math.floor(Math.random() * data.wisdom / 2) + data.wisdom // 法力
+                data.resist = Math.floor(Math.random() * 30) + 10;  // 抵抗（防御）
                 break
             }
             case 'warrior': {
@@ -73,7 +109,6 @@ class Role {
                 data.power = Math.floor(Math.random() * 50) + 60;
                 data.speed = Math.floor(Math.random() * 50) + 50;
                 data.resist = Math.floor(Math.random() * 50) + 20;
-                data.mp = 60 // 法力
                 break
             }
             case 'assassin': {
@@ -94,7 +129,6 @@ class Role {
                 data.power = Math.floor(Math.random() * 70) + 30;
                 data.speed = Math.floor(Math.random() * 50) + 50;
                 data.resist = Math.floor(Math.random() * 50) + 50;
-                data.hp = data.level * data.level * 100;
                 break
             }
             case 'boss': {
@@ -107,8 +141,7 @@ class Role {
                 data.wisdom = Math.floor(Math.random() * 100) + 0;
                 data.power = Math.floor(Math.random() * 100) + 20;
                 data.speed = Math.floor(Math.random() * 50) + 50;
-                data.resist = Math.floor(Math.random() * 100) + 50;
-                data.hp = data.level * data.level * 100 + data.level * 500;
+                data.resist = Math.floor(Math.random() * 100) + 200;
                 break
             }
             case 'mageboss': {
@@ -121,11 +154,12 @@ class Role {
                 data.wisdom = Math.floor(Math.random() * 80) + 50;
                 data.power = Math.floor(Math.random() * 20) + 0;
                 data.speed = Math.floor(Math.random() * 50) + 50;
-                data.resist = Math.floor(Math.random() * 50) + 0;
-                data.hp = data.level * data.level * 100 + data.level * 800;
+                data.resist = Math.floor(Math.random() * 50) + 200;
                 break
             }
         }
+        data.hp = Role.maxHp(data.level, data.resist);
+        data.mp = Role.maxMp(data.level, data.wisdom);
         data.weapon = weapon;
         localStorage.setItem(data.id, JSON.stringify(data));
         return data.id

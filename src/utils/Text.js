@@ -35,6 +35,7 @@ class Text { //  extends React.Component
         fontSize: 22
       }
     }
+    // console.log(param)
     const style = new PIXI.TextStyle(param);
     const richText = new PIXI.Text(str, style);
     richText.x = po.x;
