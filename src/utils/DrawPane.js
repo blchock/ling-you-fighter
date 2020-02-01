@@ -19,7 +19,10 @@ class DrawPane {
     add(name, img, po, anc, ext) { // po:{ x: 0, y: 0 }
         if (this.imgs[name]) this.del(name);
         let url = `./res/${img}.png`
-        if (ext) url = `./res/${img}.${ext}`
+        if (ext) {
+            if (ext === 'rootpath') url = img;
+            else url = `./res/${img}.${ext}`
+        }
         console.log(name, url);
         console.log(po);
         let sp = Sprite.create(scene, this.name, url, po, anc);

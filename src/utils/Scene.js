@@ -20,6 +20,10 @@ class Scene { //  extends React.Component
   hide(name) {
     this.getScene(name || this.curSceneName).visible = false
   }
+  // 画布大小
+  size() {
+    return { w: 800, h: 600 }
+  }
   // 场景切换
   replace(toName, fromName) {
     this.hide(fromName);

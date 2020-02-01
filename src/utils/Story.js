@@ -10,7 +10,6 @@ var scene;
 var draw;
 var fight;
 var Me;
-const screenSize = { w: 800, h: 600 }
 var storyFontSize = 22
 var storyLineHeight = 30
 var storyMargin = [20, 20, 20, 20]
@@ -60,7 +59,7 @@ class Story {
                     roleDefaultColor = "#F00"
                     textColor = "#000000"
                 }
-                textLines = Math.floor((screenSize.h - storyMargin[0] - storyMargin[2]) / storyLineHeight);
+                textLines = Math.floor((scene.size().h - storyMargin[0] - storyMargin[2]) / storyLineHeight);
                 if (func) func(self);
             }
         }
@@ -136,8 +135,8 @@ class Story {
         // console.log("loaded roles!")
     }
     showBg() {
-        if (txtBg) {
-            txtSp = Sprite.create(scene, 'story', `./res/${txtBg}`, {x:screenSize.w/2,y:screenSize.h/2});
+        if (txtBg && txtBg !== null) {
+            txtSp = Sprite.create(scene, 'story', `./res/${txtBg}`, { x: scene.size().w / 2, y: scene.size().h / 2 });
             this.storyBoard.push(txtSp);
         }
     }
@@ -147,8 +146,7 @@ class Story {
         this.size = this.content.length;
         this.storyBoard = [];
         if (this.chapter.name) this.showTitle(this.chapter.name);
-        else
-        {
+        else {
             this.showBg();
             this.next();
         }
@@ -157,7 +155,7 @@ class Story {
         scene.set('pause', true)
         let self = this
         let fsize = title.gblen() / 2 * 36 / 2;
-        let titleCtl = Text.create(scene, 'title', title, { x: screenSize.w / 2 - fsize, y: screenSize.h / 2 - 50 }, true);
+        let titleCtl = Text.create(scene, 'title', title, { x: scene.size().w / 2 - fsize, y: scene.size().h / 2 - 50 }, true);
         scene.show('title');
         draw.clear();
         setTimeout(() => {
@@ -233,7 +231,7 @@ class Story {
                     if (roleName) {
                         let nameW = roleName.gblen() * storyFontSize / 2 + storyLineHeight + storyMargin[3]
                         self.storyBoard.push(Text.create(scene, 'story', roleName, { x: storyMargin[3], y: (Me.chapter.pid - 1) * storyLineHeight + storyMargin[0] }, { fill: textColor, stroke: roleColor, strokeThickness: 2, fontSize: storyFontSize }));
-                        let lineFont = Math.floor((screenSize.w - storyMargin[1] - nameW) / storyFontSize);
+                        let lineFont = Math.floor((scene.size().w - storyMargin[1] - nameW) / storyFontSize);
                         let txts = self.splitsTxt(txt, lineFont);
                         txts.forEach(str => {
                             self.storyBoard.push(Text.create(scene, 'story', str, { x: nameW, y: (Me.chapter.pid - 1) * storyLineHeight + storyMargin[0] }, { fill: textColor, fontSize: storyFontSize, fontWeight: 'normal' }));
@@ -241,7 +239,7 @@ class Story {
                         });
                         // Me.chapter.pid--;
                     } else {
-                        let lineFonts = Math.floor((screenSize.w - storyMargin[1] - storyMargin[3]) / storyFontSize) // 一行显示的文本字数
+                        let lineFonts = Math.floor((scene.size().w - storyMargin[1] - storyMargin[3]) / storyFontSize) // 一行显示的文本字数
                         let txts = self.splitsTxt(txt, lineFonts);
                         txts.forEach(str => {
                             self.storyBoard.push(Text.create(scene, 'story', str, { x: storyMargin[3], y: (Me.chapter.pid - 1) * storyLineHeight + storyMargin[0] }, { fill: textColor, fontSize: storyFontSize, fontWeight: 'normal' }));
@@ -252,9 +250,26 @@ class Story {
                     break;
                 }
                 case 'fight': { // 战斗 k:敌人s v:次数
-                    // let roles = cmd.k;
-                    // let times = Number(cmd.v);
-
+                    scene.set('pause', true);
+                    let ids = cmd.k;
+                    let times = Number(cmd.v);
+                    let arr = [];
+                    ids.forEach(id => {
+                        arr.push(this.roles[id]);
+                    });
+                    fight.show();
+                    if (scene.get('isShowDrawPane')) {
+                        draw.hide();
+                    }
+                    scene.hide('story');
+                    fight.fightingTimes(fightBg, Me, arr, times, () => {
+                        scene.set('pause', false);
+                        fight.hide();
+                        if (scene.get('isShowDrawPane')) {
+                            draw.show();
+                        }
+                        scene.show('story');
+                    })
                     break;
                 }
                 case 'img': { // 图片 k:名称(任意，可以指定为ME（玩家角色）或role库中角色，如此做则不需要指定pic) v:{pic路径,po坐标,anc锚点(默认0.5图片中心定位),ext如果不是png需指定后缀} po：左上角坐标{x:0,y:0} 满800*600 url:可带相对路径/,相对res目录的
@@ -307,10 +322,10 @@ class Story {
                     let isTrue = false;
                     if (one.op) {
                         let val = one.val
-                        switch(one.op) {
+                        switch (one.op) {
                             case "!": {
                                 isTrue = true
-                                if(value && value.length > 0 && value !== "false") isTrue = false;
+                                if (value && value.length > 0 && value !== "false") isTrue = false;
                                 break;
                             }
                             case "=": {
@@ -343,7 +358,7 @@ class Story {
                             }
                         }
                     } else {
-                        if(value && value.length > 0 && value !== "false") {
+                        if (value && value.length > 0 && value !== "false") {
                             isTrue = true
                         }
                     }
@@ -367,10 +382,12 @@ class Story {
                         txtBg = cmd.k;
                         Sprite.change(txtSp, `./res/${txtBg}`);
                     }
+                    isPrompt = true;
                     break;
                 }
                 case 'fightbg': { // 改变战斗背景 {"do": "fightbg","k":"bg2.jpg"} 路径相对于res目录，需要指明后缀
                     fightBg = cmd.k;
+                    isPrompt = true;
                     break;
                 }
                 default: {
