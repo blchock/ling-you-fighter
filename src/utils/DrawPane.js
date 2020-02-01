@@ -13,6 +13,9 @@ class DrawPane {
     show() {
         scene.show(this.name);
     }
+    remove() {
+        scene.removeScene(this.name);
+    }
     add(name, img, po, anc, ext) { // po:{ x: 0, y: 0 }
         if (this.imgs[name]) this.del(name);
         let url = `./res/${img}.png`

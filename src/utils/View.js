@@ -224,7 +224,6 @@ class View extends React.Component {
       onOk() {
         scene.get('removeStoryFunc')();
         scene.removeScene('story');
-        scene.removeScene('fight');
         scene.show('entry');
         self.MNDLG_Cl();
       },

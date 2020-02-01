@@ -1,11 +1,13 @@
 import Role from '../utils/Role';
 import Text from '../utils/Text';
 import DrawPane from '../utils/DrawPane';
+import FightPane from '../utils/FightPane';
 import DB from "../utils/Database";
 import { Modal } from 'antd';
 const { confirm } = Modal;
 var scene;
 var draw;
+var fight;
 var Me;
 const screenSize = { w: 800, h: 600 }
 var storyFontSize = 22
@@ -45,6 +47,12 @@ class Story {
                     if (data.config.margin) storyMargin = data.config.margin;
                     if (data.config.roleDefaultColor) roleDefaultColor = data.config.roleDefaultColor; // 匿名角色颜色
                     if (data.config.textColor) textColor = data.config.textColor;
+                } else {
+                    storyFontSize = 22
+                    storyLineHeight = 30
+                    storyMargin = [20, 20, 20, 20]
+                    roleDefaultColor = "#F00"
+                    textColor = "#000000"
                 }
                 textLines = Math.floor((screenSize.h - storyMargin[0] - storyMargin[2]) / storyLineHeight);
                 if (func) func(self);
@@ -64,8 +72,8 @@ class Story {
         this.beginChapter();
     }
     initFightBoard() {
-        scene.newScene('fight');
-        scene.hide('fight');
+        fight = new FightPane(scene);
+        fight.hide();
     }
     initTitleBoard() {
         scene.newScene('title');
@@ -108,6 +116,9 @@ class Story {
         scene.set('removeStoryFunc', () => {
             window.removeEventListener('keypress', keyFunc)
             window.removeEventListener('mousedown', mouseFunc)
+            draw.clear();
+            draw.remove();
+            fight.remove();
         });
     }
     initRoles(array) {
@@ -356,7 +367,6 @@ class Story {
         if (Me.chapter.chapter >= this.chapterNum) {
             scene.get('removeStoryFunc')();
             scene.removeScene('story');
-            scene.removeScene('fight');
             scene.show('entry');
             return;
         }
