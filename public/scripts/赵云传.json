@@ -1,5 +1,5 @@
 {
-    "enemy": [
+    "role": [
         {
             "id": "SG-YS1",
             "name": "袁绍部将",
@@ -22,7 +22,8 @@
             "sex": 0,
             "classical": "boss",
             "icon": "Q-5",
-            "level": 5
+            "level": 5,
+            "color": "#00F"
         },
         {
             "id": "SG-CC1",
@@ -54,7 +55,8 @@
             "sex": 0,
             "classical": "mageboss",
             "icon": "Q-8",
-            "level": 12
+            "level": 12,
+            "color": "#F00"
         }
     ],
     "story": [

@@ -6,7 +6,7 @@
         "roleDefaultColor": "#fff",
         "textColor": "#000"
     },
-    "enemy": [
+    "role": [
         {
             "id": "SG-YS1",
             "name": "袁绍部将",
@@ -43,10 +43,10 @@
                 {"do": "delimg","k":"bg2","v":""},
                 "hello",
                 "hello",
-                {"do": "img","k":"bg2","v":{"pic":"Q-2","po":{"x":100,"y":100}}},
+                {"do": "img","k":"ME","v":{"po":{"x":100,"y":100}}},
                 "hello",
                 "hello",
-                {"do": "img","k":"bg3","v":{"pic":"Q-2","po":{"x":100,"y":200}}},
+                {"do": "img","k":"SG-YS2","v":{"po":{"x":100,"y":200}}},
                 "hello",
                 "hello",
                 {"do": "delimg","k":"","v":"clear"},

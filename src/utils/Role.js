@@ -7,8 +7,7 @@ class Role {
             for (const key in data) { // 赋值
                 this[key] = data[key];
             }
-            this.color = '#' + Math.random().toString(16).substr(2, 6).toUpperCase();
-            // console.log("load:", this);
+            if (!this.color) this.color = '#' + Math.random().toString(16).substr(2, 6).toUpperCase();
         }
     }
     save() {

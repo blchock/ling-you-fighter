@@ -29,7 +29,7 @@ class Story {
     init(fileName, func) {
         let self = this
         this.storyName = fileName
-        this.enemys = {}
+        this.roles = {}
         this.storyBoard = [];
         var url = `scripts/${fileName}.json`/*json文件url，本地的就写本地的位置，如果是服务器的就写服务器的路径*/
         var request = new XMLHttpRequest();
@@ -59,7 +59,7 @@ class Story {
             this.initStroyBoard();
             this.initBackground();
         }
-        this.initEnemys(this.data.enemy);
+        this.initRoles(this.data.role);
         this.chapterNum = this.data.story.length;
         this.beginChapter();
     }
@@ -110,13 +110,13 @@ class Story {
             window.removeEventListener('mousedown', mouseFunc)
         });
     }
-    initEnemys(array) {
+    initRoles(array) {
         let self = this
         array.forEach(eny => {
             let roleid = Role.create(eny);
-            self.enemys[eny.id] = new Role(roleid);
+            self.roles[eny.id] = new Role(roleid);
         });
-        // console.log("loaded enemys!")
+        // console.log("loaded roles!")
     }
     beginChapter() {
         this.chapter = this.data.story[Me.chapter.chapter];
@@ -189,9 +189,9 @@ class Story {
                         roleName = scene.get('me').name;
                         roleColor = scene.get('me').color;
                     } else {
-                        if (self.enemys[role]) {
-                            roleName = self.enemys[role].name;
-                            roleColor = self.enemys[role].color;
+                        if (self.roles[role]) {
+                            roleName = self.roles[role].name;
+                            roleColor = self.roles[role].color;
                         } else {
                             roleName = role;
                         }
@@ -228,10 +228,16 @@ class Story {
 
                     break;
                 }
-                case 'img': { // 图片 k:名称 v:{pic路径,po坐标,anc锚点(默认0.5图片中心定位),ext如果不是png需指定后缀} po：左上角坐标{x:0,y:0} 满800*600 url:可带相对路径/,相对res目录的
+                case 'img': { // 图片 k:名称(任意，可以指定为ME（玩家角色）或role库中角色，如此做则不需要指定pic) v:{pic路径,po坐标,anc锚点(默认0.5图片中心定位),ext如果不是png需指定后缀} po：左上角坐标{x:0,y:0} 满800*600 url:可带相对路径/,相对res目录的
                     let name = cmd.k;
                     let one = cmd.v;
-                    draw.add(name, one.pic, one.po, one.anc, one.ext);
+                    let url = one.pic
+                    if (name === "ME") {
+                        url = Me.icon
+                    } else if (self.roles[name]) {
+                        url = self.roles[name].icon
+                    }
+                    draw.add(name, url, one.po, one.anc, one.ext);
                     isPrompt = true;
                     break;
                 }
