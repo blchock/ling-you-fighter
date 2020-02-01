@@ -1,18 +1,18 @@
+import DB from "../utils/Database";
 class Role {
     constructor(saveID) {
         this.id = undefined;
-        let dt = localStorage.getItem(saveID);
-        if (dt && dt.length > 0) {
-            let data = JSON.parse(dt)
+        let data = DB.get(saveID, true);
+        if (data) {
             for (const key in data) { // 赋值
                 this[key] = data[key];
             }
             this.color = '#' + Math.random().toString(16).substr(2, 6).toUpperCase();
-            console.log("load:", this);
+            // console.log("load:", this);
         }
     }
     save() {
-        localStorage.setItem(this.id, JSON.stringify(this));
+        DB.set(this.id, this, true);
     }
     getMaxHp() {
         return Role.maxHp(this.level, this.resist);
@@ -157,11 +157,14 @@ class Role {
                 data.resist = Math.floor(Math.random() * 50) + 200;
                 break
             }
+            default: {
+                
+            }
         }
         data.hp = Role.maxHp(data.level, data.resist);
         data.mp = Role.maxMp(data.level, data.wisdom);
         data.weapon = weapon;
-        localStorage.setItem(data.id, JSON.stringify(data));
+        DB.set(data.id, data, true);
         return data.id
     }
 }

@@ -1,4 +1,3 @@
-import React from 'react';
 import * as PIXI from 'pixi.js';
 class Sprite {
   /**
@@ -14,7 +13,7 @@ class Sprite {
     let scene = SM.getScene(sceneName);
     const sp = PIXI.Sprite.from(path);
     anc = anc || 0.5
-    if (typeof anc === "Number") {
+    if (typeof(anc) === "number") {
       sp.anchor.set(anc);
     } else {
       sp.anchor.set(anc.x, anc.y);

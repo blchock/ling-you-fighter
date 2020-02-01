@@ -1,4 +1,5 @@
 import React from 'react';
+import DB from "../utils/Database";
 import { Modal, Input, Select, Row, Col, Radio, message, Button, Icon, Avatar } from 'antd';
 const { Option } = Select;
 const { confirm } = Modal;
@@ -32,6 +33,8 @@ class View extends React.Component {
       })
     }
     scene.call.inputDlg = (title, name, hint, func) => {
+      if (scene.get('pause')) return;
+      scene.set('pause', true);
       if (func) scene.set('inp-func', func)
       this.setState({
         inpDlg: true,
@@ -106,8 +109,8 @@ class View extends React.Component {
       message.warn('请输入完整信息！');
       return
     }
-    let account = localStorage.getItem(scene.get('rgd-id'));
-    if (account && account.length > 0) {
+    let account = DB.get(scene.get('rgd-id'), true);
+    if (account) {
       message.warn('该存档已存在，请换个存档名称！');
       return
     }
@@ -156,6 +159,7 @@ class View extends React.Component {
     this.setState({
       inpDlg: false
     })
+    scene.set('pause', false);
     scene.get('inp-func')(true, scene.get('inpd-value'));
   };
 
@@ -163,6 +167,7 @@ class View extends React.Component {
     this.setState({
       inpDlg: false
     })
+    scene.set('pause', false);
     scene.get('inp-func')(false);
   };
 
@@ -307,15 +312,15 @@ class View extends React.Component {
             <Col>
               选择形象
             <Radio.Group onChange={this.REGDLG_Inp3} style={{ width: 210, marginLeft: 10 }}>
-                <Radio value={'Q-1'}><img src='res/Q-1.png' width='30' height='40' /></Radio>
-                <Radio value={'Q-2'}><img src='res/Q-2.png' width='30' height='40' /></Radio>
-                <Radio value={'Q-3'}><img src='res/Q-3.png' width='30' height='40' /></Radio>
-                <Radio value={'Q-4'}><img src='res/Q-4.png' width='30' height='40' /></Radio>
-                <Radio value={'Q-5'}><img src='res/Q-5.png' width='30' height='40' /></Radio>
-                <Radio value={'Q-6'}><img src='res/Q-6.png' width='30' height='40' /></Radio>
-                <Radio value={'Q-7'}><img src='res/Q-7.png' width='30' height='40' /></Radio>
-                <Radio value={'Q-8'}><img src='res/Q-8.png' width='30' height='40' /></Radio>
-                <Radio value={'Q-9'}><img src='res/Q-9.png' width='30' height='40' /></Radio>
+                <Radio value={'Q-1'}><img src='res/Q-1.png' width='30' height='40' alt='' /></Radio>
+                <Radio value={'Q-2'}><img src='res/Q-2.png' width='30' height='40' alt='' /></Radio>
+                <Radio value={'Q-3'}><img src='res/Q-3.png' width='30' height='40' alt='' /></Radio>
+                <Radio value={'Q-4'}><img src='res/Q-4.png' width='30' height='40' alt='' /></Radio>
+                <Radio value={'Q-5'}><img src='res/Q-5.png' width='30' height='40' alt='' /></Radio>
+                <Radio value={'Q-6'}><img src='res/Q-6.png' width='30' height='40' alt='' /></Radio>
+                <Radio value={'Q-7'}><img src='res/Q-7.png' width='30' height='40' alt='' /></Radio>
+                <Radio value={'Q-8'}><img src='res/Q-8.png' width='30' height='40' alt='' /></Radio>
+                <Radio value={'Q-9'}><img src='res/Q-9.png' width='30' height='40' alt='' /></Radio>
               </Radio.Group>
             </Col>
           </Row>

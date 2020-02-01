@@ -1,4 +1,3 @@
-import React from 'react';
 import * as PIXI from 'pixi.js';
 class Text { //  extends React.Component
   // fontSize, fontWeight, fontStyle, fontFamily

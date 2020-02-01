@@ -1,5 +1,4 @@
 // 场景管理器
-import React from 'react';
 import * as PIXI from 'pixi.js';
 class Scene { //  extends React.Component
   constructor(color) {
