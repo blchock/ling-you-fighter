@@ -249,7 +249,7 @@ class View extends React.Component {
           {this.state.inpName}
           <Input onChange={this.INPDLG_Inp1} style={{ width: 210, marginLeft: 10 }} placeholder={this.state.inpHint} />
         </Modal>
-        <Modal title='灵佑大陆'
+        <Modal title='灵佑世界'
           visible={this.state.menuDlg}
           width={378}
           onCancel={this.MNDLG_Cl}
@@ -264,14 +264,14 @@ class View extends React.Component {
               <Button onClick={this.MNDLG_PK}><Icon type="crown" />排位赛PK</Button>
             </ButtonGroup>
             <ButtonGroup style={{marginTop: 10}}>
-              <Button onClick={this.MNDLG_New}><Icon type="read" />新的故事</Button>
+              <Button onClick={this.MNDLG_New}><Icon type="read" />新的冒险</Button>
               <Button onClick={this.MNDLG_Save}><Icon type="save" />保存进度</Button>
               <Button onClick={this.MNDLG_Back}><Icon type="rollback" />返回标题</Button>
             </ButtonGroup>
           </Row>
         </Modal>
         <Modal
-          title="新的征程"
+          title="新建角色"
           visible={this.state.regDlg}
           onOk={this.REGDLG_Ok}
           width={330}
