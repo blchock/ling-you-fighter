@@ -37,7 +37,7 @@ class Entry {
 
   init() {
     let self = this;
-    Sprite.create(scene, this.name, './bg/d462f7122d061de4061f351d4f0e6475.jpg', { x: 400, y: 300 })
+    Sprite.create(scene, this.name, './bg/home_bg.jpg', { x: 400, y: 300 })
     Text.create(scene, this.name, '灵佑世界', { x: 30, y: 30 }, true);
     Text.create(scene, this.name, '开始冒险', { x: 50, y: 120 }, { fill: "#ffffff" }, () => {
       scene.call.inputDlg('选择角色', '人物名称', '输入简短的英文或数字', (isOk, value) => {

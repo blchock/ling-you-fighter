@@ -1,5 +1,6 @@
 import Role from '../utils/Role';
 import Text from '../utils/Text';
+import Sprite from '../utils/Sprite';
 import DrawPane from '../utils/DrawPane';
 import FightPane from '../utils/FightPane';
 import DB from "../utils/Database";
@@ -16,6 +17,9 @@ var storyMargin = [20, 20, 20, 20]
 var textLines = 18
 var roleDefaultColor = "#F00"
 var textColor = "#000000"
+var fightBg = null
+var txtBg = null
+var txtSp = null
 class Story {
     constructor(sc, fileName, func) {
         let self = this
@@ -47,6 +51,8 @@ class Story {
                     if (data.config.margin) storyMargin = data.config.margin;
                     if (data.config.roleDefaultColor) roleDefaultColor = data.config.roleDefaultColor; // 匿名角色颜色
                     if (data.config.textColor) textColor = data.config.textColor;
+                    if (data.config.fightBg) fightBg = data.config.fightBg;
+                    if (data.config.txtBg) txtBg = data.config.txtBg;
                 } else {
                     storyFontSize = 22
                     storyLineHeight = 30
@@ -129,13 +135,23 @@ class Story {
         });
         // console.log("loaded roles!")
     }
+    showBg() {
+        if (txtBg) {
+            txtSp = Sprite.create(scene, 'story', `./res/${txtBg}`, {x:screenSize.w/2,y:screenSize.h/2});
+            this.storyBoard.push(txtSp);
+        }
+    }
     beginChapter() {
         this.chapter = this.data.story[Me.chapter.chapter];
         this.content = this.chapter.chapter;
         this.size = this.content.length;
         this.storyBoard = [];
         if (this.chapter.name) this.showTitle(this.chapter.name);
-        else this.next();
+        else
+        {
+            this.showBg();
+            this.next();
+        }
     }
     showTitle(title) {
         scene.set('pause', true)
@@ -149,6 +165,7 @@ class Story {
             scene.remove(titleCtl, 'title');
             scene.show('story');
             scene.set('pause', false)
+            self.showBg();
             if (Me.chapter.line > 0) { // 读取上次进度
                 let line = Me.chapter.line
                 Me.chapter.line = 0
@@ -210,6 +227,7 @@ class Story {
                     Me.chapter.pid++;
                     if (Me.chapter.pid >= textLines) {
                         self.clearStoryBoard();
+                        self.showBg();
                         Me.chapter.pid++;
                     }
                     if (roleName) {
@@ -342,6 +360,17 @@ class Story {
                 case 'end': { // 结束游戏 {"do": "end"} 由于是直接结束，所以建议在前面加上提示已经结束的话
                     Me.chapter.chapter = self.chapterNum
                     self.goto();
+                    break;
+                }
+                case 'bg': { // 改变文本框背景 {"do": "bg","k":"bg1.jpg"} 路径相对于res目录，需要指明后缀
+                    if (txtSp) {
+                        txtBg = cmd.k;
+                        Sprite.change(txtSp, `./res/${txtBg}`);
+                    }
+                    break;
+                }
+                case 'fightbg': { // 改变战斗背景 {"do": "fightbg","k":"bg2.jpg"} 路径相对于res目录，需要指明后缀
+                    fightBg = cmd.k;
                     break;
                 }
                 default: {

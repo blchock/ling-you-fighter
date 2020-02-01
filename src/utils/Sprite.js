@@ -29,6 +29,9 @@ class Sprite {
     }
     return sp;
   }
+  static change(sp, url) {
+    sp.texture = PIXI.Texture.from(url);
+  }
 }
 
 export default Sprite;

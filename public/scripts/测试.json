@@ -4,7 +4,9 @@
         "lineHeight": 26,
         "margin": [ 100, 20, 100, 320 ],
         "roleDefaultColor": "#fff",
-        "textColor": "#000"
+        "textColor": "#000",
+        "txtBg": "txt.jpg",
+        "fightBg": "fight.jpg"
     },
     "role": [
         {
@@ -70,6 +72,7 @@
             "id": 2,
             "chapter": [
                 {"do": "say","k": "ME","v": "终究不能做有违德操的事。"},
+                {"do": "bg","k":"fight.jpg"},
                 "建安五年（公元200年），刘备在徐州被曹操打败之后前去依附袁绍。",
                 "赵云到邺城见到刘备，二人同床眠卧。",
                 "刘备秘密派谴赵云招募兵士数百，对外宣称是左将军刘备的部曲，而此事袁绍并不知情。",
