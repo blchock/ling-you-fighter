@@ -9,7 +9,7 @@ class Sprite {
    * @anc 精灵锚点(x,y)
    * @onClick 精灵点击事件
    */
-  static create(SM, sceneName, path, po, anc, onClick) {
+  static create(SM, sceneName, path, po, size, anc, onClick) {
     let scene = SM.getScene(sceneName);
     const sp = PIXI.Sprite.from(path);
     anc = anc || 0.5
@@ -20,6 +20,10 @@ class Sprite {
     }
     sp.x = po.x;
     sp.y = po.y;
+    if (size) {
+      sp.width = size.w;
+      sp.height = size.h;
+    }
     scene.addChild(sp);
     if (onClick)
     {
@@ -31,6 +35,36 @@ class Sprite {
   }
   static change(sp, url) {
     sp.texture = PIXI.Texture.from(url);
+  }
+  // 创建圆形 color：0x333333
+  static circle(SM, sceneName, color, po, r, linecolor, linew, lineAlpha) {
+    let scene = SM.getScene(sceneName);
+    var g = new PIXI.Graphics();
+    if(linecolor) {
+      r.lineStyle(linew || 1, linecolor, lineAlpha || 1);
+    }
+    if(color) g.beginFill(color);
+    g.drawCircle(0, 0, r); //x,y,r
+    g.endFill();
+    g.x = po.x;
+    g.y = po.y;
+    scene.addChild(g);
+    return g;
+  }
+  // 创建矩形
+  static react(SM, sceneName, color, po, size, linecolor, linew, lineAlpha) {
+    let scene = SM.getScene(sceneName);
+    let r = new PIXI.Graphics();
+    if(linecolor) {
+      r.lineStyle(linew || 1, linecolor, lineAlpha || 1);
+    }
+    if(color) r.beginFill(color);
+    r.drawRect(0, 0, size.w, size.h);
+    r.endFill();
+    r.x = po.x;
+    r.y = po.y;
+    scene.addChild(r);
+    return r;
   }
 }
 

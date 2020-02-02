@@ -102,18 +102,29 @@ class Story {
         scene.newScene('story');
         scene.hide('story');
         let keyFunc = (e) => {
-            console.log(e)
             if (e.code === 'Enter' || e.code === 'Space') {
                 self.next();
             } else if (e.code === 'Backquote') {
                 scene.call.showMenu();
             } else if (e.code === 'KeyP') {
                 self.switchDrawPane();
+            } else if (e.code === 'KeyT') {
+                scene.set('testmode', !scene.get('testmode'));
             }
         }
         let mouseFunc = (e) => {
             if (e.button === 0) {
                 self.next();
+            }
+            if (scene.get('testmode')) {
+                let po = { x: e.screenX, y: e.screenY }
+                if (e.button === 1) { // 鼠标左键 0 中键 1 右键 2
+                    scene.set('testmode_anc', po);
+                    console.log('TEST set ora po:', po);
+                } else if (e.button === 0) {
+                    let anc = scene.get('testmode_anc') || { x: 0, y: 0 };
+                    console.log('TEST the delta po:', { x: po.x - anc.x, y: po.y - anc.y })
+                }
             }
         }
         window.addEventListener('keypress', keyFunc)
@@ -164,7 +175,9 @@ class Story {
             scene.show('story');
             scene.set('pause', false)
             self.showBg();
+            // console.log("line:",Me.chapter.line)
             if (Me.chapter.line > 0) { // 读取上次进度
+                Me.chapter.line--;
                 let line = Me.chapter.line
                 Me.chapter.line = 0
                 Me.chapter.pid = 0
@@ -272,7 +285,7 @@ class Story {
                     })
                     break;
                 }
-                case 'img': { // 图片 k:名称(任意，可以指定为ME（玩家角色）或role库中角色，如此做则不需要指定pic) v:{pic路径,po坐标,anc锚点(默认0.5图片中心定位),ext如果不是png需指定后缀} po：左上角坐标{x:0,y:0} 满800*600 url:可带相对路径/,相对res目录的
+                case 'img': { // 图片 k:名称(任意，可以指定为ME（玩家角色）或role库中角色，如此做则不需要指定pic) v:{pic路径,po坐标,size图片大小（可不指定）,anc锚点(默认0.5图片中心定位),ext如果不是png需指定后缀} po：左上角坐标{x:0,y:0} 满800*600 url:可带相对路径/,相对res目录的
                     let name = cmd.k;
                     let one = cmd.v;
                     let url = one.pic
@@ -281,7 +294,7 @@ class Story {
                     } else if (self.roles[name]) {
                         url = self.roles[name].icon
                     }
-                    draw.add(name, url, one.po, one.anc, one.ext);
+                    draw.add(name, url, one.po, one.size, one.anc, one.ext);
                     isPrompt = true;
                     break;
                 }
