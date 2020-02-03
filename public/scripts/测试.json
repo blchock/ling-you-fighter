@@ -5,8 +5,7 @@
         "margin": [ 100, 20, 100, 320 ],
         "roleDefaultColor": "#fff",
         "textColor": "#000",
-        "txtBg": "txt.jpg",
-        "fightBg": "fight.jpg"
+        "txtBg": "txt.jpg"
     },
     "role": [
         {

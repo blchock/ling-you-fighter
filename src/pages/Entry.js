@@ -37,6 +37,7 @@ class Entry {
 
   init() {
     let self = this;
+    Sprite.loadingPack();
     Sprite.create(scene, this.name, './bg/home_bg.jpg', { x: 400, y: 300 })
     Text.create(scene, this.name, '灵佑世界', { x: 30, y: 30 }, true);
     Text.create(scene, this.name, '开始冒险', { x: 50, y: 120 }, { fill: "#ffffff" }, () => {
