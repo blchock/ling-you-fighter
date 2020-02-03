@@ -8,6 +8,10 @@ class FightPane {
         this.name = 'fightpane';
         scene.newScene(this.name);
         this.imgs = {}
+        this.says = []
+        this.sayCount = 10;
+        this.sayLineHeight = 14;
+        this.curBack = null;
     }
     hide() {
         scene.hide(this.name);
@@ -19,24 +23,26 @@ class FightPane {
         scene.removeScene(this.name);
     }
     onMage0Btn() {
-        console.log("onMage0Btn");
+        this.say("onMage0Btn");
     }
     onMage1Btn() {
-        console.log("onMage1Btn");
+        this.say("onMage1Btn");
     }
     onMage2Btn() {
-        console.log("onMage2Btn");
+        this.say("onMage2Btn");
     }
     onAtkBtn() {
-        console.log("onAtkBtn");
+        this.say("onAtkBtn");
     }
     onUseBtn() {
-        console.log("onUseBtn");
+        this.say("onUseBtn");
     }
-    onSetBtn() {
-        console.log("onSetBtn");
+    onLeaveBtn() {
+        this.clear();
+        if(this.curBack) this.curBack();
     }
     initView(fightBg, roleMe) { // 初始化界面
+        let self = this;
         let ss = scene.size()
         // set bg
         let url = ''
@@ -82,7 +88,7 @@ class FightPane {
         let r = 15; // 按钮半径
         var btn0 = new PIXI.Graphics();
         btn0.lineStyle(1, 0xC1CDCD, 1);
-        btn0.beginFill(0xF0FFF0);
+        btn0.beginFill(0xF0FFF0, 0.9);
         btn0.drawCircle(0, 0, r);
         btn0.endFill();
         btn0.x = po.x - 70;
@@ -91,7 +97,7 @@ class FightPane {
         this.insert('btn0', btn0);
         var btn1 = new PIXI.Graphics();
         btn1.lineStyle(1, 0xC1CDCD, 1);
-        btn1.beginFill(0xF0FFF0);
+        btn1.beginFill(0xF0FFF0, 0.9);
         btn1.drawCircle(0, 0, r);
         btn1.endFill();
         btn1.x = po.x - 105;
@@ -100,7 +106,7 @@ class FightPane {
         this.insert('btn1', btn1);
         var btn2 = new PIXI.Graphics();
         btn2.lineStyle(1, 0xC1CDCD, 1);
-        btn2.beginFill(0xF0FFF0);
+        btn2.beginFill(0xF0FFF0, 0.9);
         btn2.drawCircle(0, 0, r);
         btn2.endFill();
         btn2.x = po.x - 140;
@@ -109,7 +115,7 @@ class FightPane {
         this.insert('btn2', btn2);
         var btn3 = new PIXI.Graphics();
         btn3.lineStyle(1, 0xC1CDCD, 1);
-        btn3.beginFill(0xF0FFF0);
+        btn3.beginFill(0xF0FFF0, 0.9);
         btn3.drawCircle(0, 0, r);
         btn3.endFill();
         btn3.x = po.x - 78;
@@ -118,7 +124,7 @@ class FightPane {
         this.insert('btn3', btn3);
         var btn4 = new PIXI.Graphics();
         btn4.lineStyle(1, 0xC1CDCD, 1);
-        btn4.beginFill(0xF0FFF0);
+        btn4.beginFill(0xF0FFF0, 0.9);
         btn4.drawCircle(0, 0, r);
         btn4.endFill();
         btn4.x = po.x - 112;
@@ -127,7 +133,7 @@ class FightPane {
         this.insert('btn4', btn4);
         var btn5 = new PIXI.Graphics();
         btn5.lineStyle(1, 0xC1CDCD, 1);
-        btn5.beginFill(0xF0FFF0);
+        btn5.beginFill(0xF0FFF0, 0.9);
         btn5.drawCircle(0, 0, r);
         btn5.endFill();
         btn5.x = po.x - 70;
@@ -137,7 +143,7 @@ class FightPane {
         // headborder
         var menu = new PIXI.Graphics();
         menu.lineStyle(10, 0x36648B, 1);
-        menu.beginFill(0xffffff);
+        menu.beginFill(0xffffff, 0.9);
         menu.drawCircle(0, 0, headWidth/2 + 5); //x,y,r
         menu.lineStyle(0);
         menu.endFill();
@@ -147,29 +153,29 @@ class FightPane {
         this.insert('menu', menu);
         // head
         var headmask = new PIXI.Graphics();
-        headmask.beginFill(0x333333);
+        headmask.beginFill(0x333333, 0.9);
         headmask.drawCircle(po.x, po.y, headWidth/2); //x,y,r
         headmask.endFill();
         let head = this.add('fm_icon', roleMe.icon, po, {w:headWidth,h:headWidth})
         head.mask = headmask;
         // 
-        let b0 = Sprite.createIcon(scene,this.name,'i_water',{x:btn0.x,y:btn0.y},r*2-8,0,this.onMage0Btn);
+        let b0 = Sprite.createIcon(scene,this.name,'i_water',{x:btn0.x,y:btn0.y},r*2-8,0,()=>{self.onMage0Btn()});
         let t0 = Text.createSpTxt(scene,this.name, b0,'技能1','down',5,{fill:'#36648B',fontSize:10,stroke: '#fff',strokeThickness: 1});
         this.insert('b0', b0); this.insert('t0', t0);
-        let b1 = Sprite.createIcon(scene,this.name,'i_star',{x:btn1.x,y:btn1.y+1},r*2-8,0,this.onMage1Btn);
+        let b1 = Sprite.createIcon(scene,this.name,'i_star',{x:btn1.x,y:btn1.y+1},r*2-8,0,()=>{self.onMage1Btn()});
         let t1 = Text.createSpTxt(scene,this.name, b1,'技能2','down',5,{fill:'#36648B',fontSize:10,stroke: '#fff',strokeThickness: 1});
         this.insert('b1', b1); this.insert('t1', t1);
-        let b2 = Sprite.createIcon(scene,this.name,'i_l2',{x:btn2.x+1,y:btn2.y+1},r*2,0,this.onMage2Btn);
+        let b2 = Sprite.createIcon(scene,this.name,'i_l2',{x:btn2.x+1,y:btn2.y+1},r*2,0,()=>{self.onMage2Btn()});
         let t2 = Text.createSpTxt(scene,this.name, b2,'技能3','down',0,{fill:'#36648B',fontSize:10,stroke: '#fff',strokeThickness: 1});
         this.insert('b2', b2); this.insert('t2', t2);
-        let b3 = Sprite.createIcon(scene,this.name,'i_atk',{x:btn3.x+1,y:btn3.y+1},r*2-2,0,this.onAtkBtn);
+        let b3 = Sprite.createIcon(scene,this.name,'i_atk',{x:btn3.x+1,y:btn3.y+1},r*2-2,0,()=>{self.onAtkBtn()});
         let t3 = Text.createSpTxt(scene,this.name, b3,'攻击','down',0,{fill:'#36648B',fontSize:10,stroke: '#fff',strokeThickness: 1});
         this.insert('b3', b3); this.insert('t3', t3);
-        let b4 = Sprite.createIcon(scene,this.name,'i_med',{x:btn4.x,y:btn4.y},r*2-8,0,this.onUseBtn);
+        let b4 = Sprite.createIcon(scene,this.name,'i_med',{x:btn4.x,y:btn4.y},r*2-8,0,()=>{self.onUseBtn()});
         let t4 = Text.createSpTxt(scene,this.name, b4,'物品','down',5,{fill:'#36648B',fontSize:10,stroke: '#fff',strokeThickness: 1});
         this.insert('b4', b4); this.insert('t4', t4);
-        let b5 = Sprite.createIcon(scene,this.name,'i_set',{x:btn5.x,y:btn5.y},r*2-8,0,this.onSetBtn);
-        let t5 = Text.createSpTxt(scene,this.name, b5,'功能','down',5,{fill:'#36648B',fontSize:10,stroke: '#fff',strokeThickness: 1});
+        let b5 = Sprite.createIcon(scene,this.name,'i_fly',{x:btn5.x,y:btn5.y+1},r*2,0,()=>{self.onLeaveBtn()});
+        let t5 = Text.createSpTxt(scene,this.name, b5,'逃跑','down',0,{fill:'#36648B',fontSize:10,stroke: '#fff',strokeThickness: 1});
         this.insert('b5', b5); this.insert('t5', t5);
         // Text
         let inforTxt = `Lv.${roleMe.level} ${roleMe.getClassicalName()}`;
@@ -177,10 +183,40 @@ class FightPane {
         this.insert('menu_roleName', menu_roleName);
         let menu_roleInfor = Text.create(scene, this.name, inforTxt, {x: po.x + 60, y: po.y + 34}, { fill: '#000', fontSize: 12, stroke: '#fff', strokeThickness: 1})
         this.insert('menu_roleInfor', menu_roleInfor);
+        // inforPane
+        var inforPane = new PIXI.Graphics();
+        inforPane.lineStyle(2, 0x000000, 0.6);
+        inforPane.beginFill(0xF0FFF0, 0.6);
+        inforPane.drawRoundedRect(-220, 20, 200, 150, 8);
+        inforPane.endFill();
+        inforPane.x = ss.w;
+        inforPane.y = 0;
+        sc.addChild(inforPane);
+        this.insert('inforPane', inforPane);
+    }
+    say(str) {
+        let ss = scene.size()
+        if(this.says.length === this.sayCount) {
+            scene.remove(this.says[0], this.name);
+            this.says.shift();
+            for (const i in this.says) {
+                this.says[i].y = this.says[i].y - this.sayLineHeight;
+            }
+        }
+        let txt = Text.create(scene, this.name, str, {x:ss.w - 213,y:25 + this.says.length * this.sayLineHeight}, {fill:'#000',fontSize:10});
+        this.says.push(txt);
+    }
+    initRole(roleMe, roleR) {
+        
     }
     fighting(fightBg, roleMe, roleR, func) {
+        this.imgs = {}
+        this.says = []
+        this.sayCount = 10;
+        this.sayLineHeight = 14;
+        this.curBack = func;
         this.initView(fightBg, roleMe);
-
+        this.initRole(roleMe, roleR);
     }
     fightingTimes(fightBg, roleMe, roles, times, func) {
         let self = this
@@ -223,6 +259,10 @@ class FightPane {
             scene.remove(this.imgs[name], this.name);
         }
         this.imgs = {}
+        for (const i in this.says) {
+            scene.remove(this.says[i], this.name);
+        }
+        this.says = {}
     }
 }
 
