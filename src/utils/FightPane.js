@@ -9,8 +9,10 @@ class FightPane {
         scene.newScene(this.name);
         this.imgs = {}
         this.says = []
-        this.sayCount = 10;
+        this.sayCount = 12;
         this.sayLineHeight = 14;
+        this.sayMargin = 5;
+        this.statusWidth = 80;
         this.curBack = null;
     }
     hide() {
@@ -24,43 +26,51 @@ class FightPane {
     }
     onMage0Btn() {
         this.say("onMage0Btn");
+        this.meSp.x = this.meSp.x + 10;
+        this.roleMe.hp = this.roleMe.hp - 5;
     }
     onMage1Btn() {
         this.say("onMage1Btn");
+        this.meSp.x = this.meSp.x - 10;
+        this.roleMe.mp = this.roleMe.mp - 5;
     }
     onMage2Btn() {
         this.say("onMage2Btn");
     }
     onAtkBtn() {
         this.say("onAtkBtn");
+        this.meSp.y = this.meSp.y + 10;
+        this.roleMe.hp = this.roleMe.hp - 1;
     }
     onUseBtn() {
         this.say("onUseBtn");
+        this.meSp.y = this.meSp.y - 10;
+        this.roleMe.mp = this.roleMe.mp - 1;
     }
     onLeaveBtn() {
         this.clear();
-        if(this.curBack) this.curBack();
+        if (this.curBack) this.curBack();
     }
     initView(fightBg, roleMe) { // 初始化界面
         let self = this;
         let ss = scene.size()
         // set bg
         let url = ''
-        if(fightBg && fightBg !== null) {
+        if (fightBg && fightBg !== null) {
             url = `./res/${fightBg}`
         } else url = './bg/fight_bg.jpg'
         this.add('bgSp', url, { x: ss.w / 2, y: ss.h / 2 }, undefined, 0.5, 'rootpath');
         // set menu
-        let po = {x: ss.w / 2 - 30, y: ss.h - 100}
+        let po = { x: ss.w / 2 - 30, y: ss.h - 100 }
         var headWidth = 80// proportion是百分比，170是设计图宽高
         let sc = scene.getScene(this.name);
         // bar
         var bar = new PIXI.Graphics();
         // bar.lineStyle(0);
         bar.beginFill(0xF08080);
-        bar.drawRoundedRect(headWidth/2 - 5, -35, 200, 15, 7);
+        bar.drawRoundedRect(headWidth / 2 - 5, -35, 200, 15, 7);
         bar.beginFill(0x48D1CC);
-        bar.drawRoundedRect(headWidth/2 + 1, -15, 160, 13, 6);
+        bar.drawRoundedRect(headWidth / 2 + 1, -15, 160, 13, 6);
         bar.endFill();
         bar.x = po.x;
         bar.y = po.y;
@@ -69,19 +79,21 @@ class FightPane {
         // hp
         var hp = new PIXI.Graphics();
         hp.beginFill(0xEE0000);
-        hp.drawRoundedRect(headWidth/2 - 3, -33, 196, 11, 5);
+        hp.drawRoundedRect(headWidth / 2 - 3, -33, 196, 11, 5);
         hp.endFill();
         hp.x = po.x;
         hp.y = po.y;
         sc.addChild(hp);
+        this.hpBar = hp;
         this.insert('hp', hp);
         // mp
         var mp = new PIXI.Graphics();
         mp.beginFill(0x1874CD);
-        mp.drawRoundedRect(headWidth/2 + 2, -13, 156, 9, 4);
+        mp.drawRoundedRect(headWidth / 2 + 2, -13, 156, 9, 4);
         mp.endFill();
         mp.x = po.x;
         mp.y = po.y;
+        this.mpBar = mp;
         sc.addChild(mp);
         this.insert('mp', mp);
         // btn
@@ -144,7 +156,7 @@ class FightPane {
         var menu = new PIXI.Graphics();
         menu.lineStyle(10, 0x36648B, 1);
         menu.beginFill(0xffffff, 0.9);
-        menu.drawCircle(0, 0, headWidth/2 + 5); //x,y,r
+        menu.drawCircle(0, 0, headWidth / 2 + 5); //x,y,r
         menu.lineStyle(0);
         menu.endFill();
         menu.x = po.x;
@@ -154,69 +166,131 @@ class FightPane {
         // head
         var headmask = new PIXI.Graphics();
         headmask.beginFill(0x333333, 0.9);
-        headmask.drawCircle(po.x, po.y, headWidth/2); //x,y,r
+        headmask.drawCircle(po.x, po.y, headWidth / 2); //x,y,r
         headmask.endFill();
-        let head = this.add('fm_icon', roleMe.icon, po, {w:headWidth,h:headWidth})
+        let head = this.add('fm_icon', roleMe.icon, po, { w: headWidth, h: headWidth })
         head.mask = headmask;
         // 
-        let b0 = Sprite.createIcon(scene,this.name,'i_water',{x:btn0.x,y:btn0.y},r*2-8,0,()=>{self.onMage0Btn()});
-        let t0 = Text.createSpTxt(scene,this.name, b0,'技能1','down',5,{fill:'#36648B',fontSize:10,stroke: '#fff',strokeThickness: 1});
+        let b0 = Sprite.createIcon(scene, this.name, 'i_water', { x: btn0.x, y: btn0.y }, r * 2 - 8, 0, () => { self.onMage0Btn() });
+        let t0 = Text.createSpTxt(scene, this.name, b0, '技能1', 'down', 5, { fill: '#36648B', fontSize: 10, stroke: '#fff', strokeThickness: 1 });
         this.insert('b0', b0); this.insert('t0', t0);
-        let b1 = Sprite.createIcon(scene,this.name,'i_star',{x:btn1.x,y:btn1.y+1},r*2-8,0,()=>{self.onMage1Btn()});
-        let t1 = Text.createSpTxt(scene,this.name, b1,'技能2','down',5,{fill:'#36648B',fontSize:10,stroke: '#fff',strokeThickness: 1});
+        let b1 = Sprite.createIcon(scene, this.name, 'i_star', { x: btn1.x, y: btn1.y + 1 }, r * 2 - 8, 0, () => { self.onMage1Btn() });
+        let t1 = Text.createSpTxt(scene, this.name, b1, '技能2', 'down', 5, { fill: '#36648B', fontSize: 10, stroke: '#fff', strokeThickness: 1 });
         this.insert('b1', b1); this.insert('t1', t1);
-        let b2 = Sprite.createIcon(scene,this.name,'i_l2',{x:btn2.x+1,y:btn2.y+1},r*2,0,()=>{self.onMage2Btn()});
-        let t2 = Text.createSpTxt(scene,this.name, b2,'技能3','down',0,{fill:'#36648B',fontSize:10,stroke: '#fff',strokeThickness: 1});
+        let b2 = Sprite.createIcon(scene, this.name, 'i_l2', { x: btn2.x + 1, y: btn2.y + 1 }, r * 2, 0, () => { self.onMage2Btn() });
+        let t2 = Text.createSpTxt(scene, this.name, b2, '技能3', 'down', 0, { fill: '#36648B', fontSize: 10, stroke: '#fff', strokeThickness: 1 });
         this.insert('b2', b2); this.insert('t2', t2);
-        let b3 = Sprite.createIcon(scene,this.name,'i_atk',{x:btn3.x+1,y:btn3.y+1},r*2-2,0,()=>{self.onAtkBtn()});
-        let t3 = Text.createSpTxt(scene,this.name, b3,'攻击','down',0,{fill:'#36648B',fontSize:10,stroke: '#fff',strokeThickness: 1});
+        let b3 = Sprite.createIcon(scene, this.name, 'i_atk', { x: btn3.x + 1, y: btn3.y + 1 }, r * 2 - 2, 0, () => { self.onAtkBtn() });
+        let t3 = Text.createSpTxt(scene, this.name, b3, '攻击', 'down', 0, { fill: '#36648B', fontSize: 10, stroke: '#fff', strokeThickness: 1 });
         this.insert('b3', b3); this.insert('t3', t3);
-        let b4 = Sprite.createIcon(scene,this.name,'i_med',{x:btn4.x,y:btn4.y},r*2-8,0,()=>{self.onUseBtn()});
-        let t4 = Text.createSpTxt(scene,this.name, b4,'物品','down',5,{fill:'#36648B',fontSize:10,stroke: '#fff',strokeThickness: 1});
+        let b4 = Sprite.createIcon(scene, this.name, 'i_med', { x: btn4.x, y: btn4.y }, r * 2 - 8, 0, () => { self.onUseBtn() });
+        let t4 = Text.createSpTxt(scene, this.name, b4, '物品', 'down', 5, { fill: '#36648B', fontSize: 10, stroke: '#fff', strokeThickness: 1 });
         this.insert('b4', b4); this.insert('t4', t4);
-        let b5 = Sprite.createIcon(scene,this.name,'i_fly',{x:btn5.x,y:btn5.y+1},r*2,0,()=>{self.onLeaveBtn()});
-        let t5 = Text.createSpTxt(scene,this.name, b5,'逃跑','down',0,{fill:'#36648B',fontSize:10,stroke: '#fff',strokeThickness: 1});
+        let b5 = Sprite.createIcon(scene, this.name, 'i_fly', { x: btn5.x, y: btn5.y + 1 }, r * 2, 0, () => { self.onLeaveBtn() });
+        let t5 = Text.createSpTxt(scene, this.name, b5, '逃跑', 'down', 0, { fill: '#36648B', fontSize: 10, stroke: '#fff', strokeThickness: 1 });
         this.insert('b5', b5); this.insert('t5', t5);
         // Text
         let inforTxt = `Lv.${roleMe.level} ${roleMe.getClassicalName()}`;
-        let menu_roleName = Text.create(scene, this.name, roleMe.name, {x: po.x + 60, y: po.y + 5}, { fill: '#000', fontSize: 24, fontWeight: 'bold', stroke: '#fff', strokeThickness: 2})
+        let menu_roleName = Text.create(scene, this.name, roleMe.name, { x: po.x + 60, y: po.y + 5 }, { fill: '#000', fontSize: 24, fontWeight: 'bold', stroke: '#fff', strokeThickness: 2 })
         this.insert('menu_roleName', menu_roleName);
-        let menu_roleInfor = Text.create(scene, this.name, inforTxt, {x: po.x + 60, y: po.y + 34}, { fill: '#000', fontSize: 12, stroke: '#fff', strokeThickness: 1})
+        let menu_roleInfor = Text.create(scene, this.name, inforTxt, { x: po.x + 60, y: po.y + 34 }, { fill: '#000', fontSize: 12, stroke: '#fff', strokeThickness: 1 })
         this.insert('menu_roleInfor', menu_roleInfor);
         // inforPane
         var inforPane = new PIXI.Graphics();
         inforPane.lineStyle(2, 0x000000, 0.6);
         inforPane.beginFill(0xF0FFF0, 0.6);
-        inforPane.drawRoundedRect(-220, 20, 200, 150, 8);
+        inforPane.drawRoundedRect(-250, 20, 230, this.sayMargin * 2 + this.sayCount * this.sayLineHeight, 8);
         inforPane.endFill();
         inforPane.x = ss.w;
         inforPane.y = 0;
         sc.addChild(inforPane);
         this.insert('inforPane', inforPane);
     }
-    say(str) {
+    say(str, color) {
         let ss = scene.size()
-        if(this.says.length === this.sayCount) {
+        if (this.says.length === this.sayCount) {
             scene.remove(this.says[0], this.name);
             this.says.shift();
             for (const i in this.says) {
                 this.says[i].y = this.says[i].y - this.sayLineHeight;
             }
         }
-        let txt = Text.create(scene, this.name, str, {x:ss.w - 213,y:25 + this.says.length * this.sayLineHeight}, {fill:'#000',fontSize:10});
+        let txt = Text.create(scene, this.name, str, { x: ss.w - 243, y: 25 + this.says.length * this.sayLineHeight }, { fill: color || '#000', fontSize: 10 });
         this.says.push(txt);
     }
+    createRoleStatus(sp) {
+        let sc = scene.getScene(this.name);
+        let w = this.statusWidth
+        // status
+        var status = new PIXI.Graphics();
+        status.beginFill(0xFFE4C4);
+        status.drawRect( - w / 2 - 1,  - sp.height / 2 - 15, w + 2, 10);
+        status.endFill();
+        status.x = sp.x;
+        status.y = sp.y;
+        sc.addChild(status);
+        // hp
+        var hp = new PIXI.Graphics();
+        hp.beginFill(0xEE0000);
+        hp.drawRect(0, 1 - sp.height / 2 - 15, w, 4);
+        hp.endFill();
+        hp.x = sp.x - w / 2;
+        hp.y = sp.y;
+        sc.addChild(hp);
+        // mp
+        var mp = new PIXI.Graphics();
+        mp.beginFill(0x1874CD);
+        mp.drawRect(0, 6 - sp.height / 2 - 15, w, 3);
+        mp.endFill();
+        mp.x = sp.x - w / 2;
+        mp.y = sp.y;
+        sc.addChild(mp);
+        return {st: status, hp: hp, mp: mp}
+    }
     initRole(roleMe, roleR) {
-        
+        let ss = scene.size()
+        let pMe = { x: 200, y: ss.h / 2 }
+        let pR = { x: ss.w - 200, y: ss.h / 2 }
+        let roleSize = { h: 100 }
+        this.meSp = this.add("f_roleMe", roleMe.icon, pMe, roleSize);
+        this.meSp.scale.x = -1; // x翻转
+        this.rSp = this.add("f_roleR", roleR.icon, pR, roleSize);
+        let one = this.createRoleStatus(this.meSp);
+        this.fMeSt = one.st; this.fMeHp = one.hp; this.fMeMp = one.mp;
+        this.insert('fMeSt', this.fMeSt); this.insert('fMeHp', this.fMeHp); this.insert('fMeMp', this.fMeMp);
+        let two = this.createRoleStatus(this.rSp);
+        this.fRSt = two.st; this.fRHp = two.hp; this.fRMp = two.mp;
+        this.insert('fRSt', this.fRSt); this.insert('fRHp', this.fRHp); this.insert('fRMp', this.fRMp);
+        this.fMeName = Text.createSpTxt(scene, this.name, this.meSp, roleMe.name, 'up', 20, { fill: '#00F', fontSize: 10, stroke: '#fff', strokeThickness: 1 });
+        this.insert('fMeName', this.fMeName);
+        this.fRName = Text.createSpTxt(scene, this.name, this.rSp, roleR.name, 'up', 20, { fill: '#F00', fontSize: 10, stroke: '#fff', strokeThickness: 1 });
+        this.insert('fRName', this.fRName);
+    }
+    gameLoop(delta) {
+        // 同步玩家信息
+        this.hpBar.width = this.roleMe.getHpValue(196);
+        this.mpBar.width = this.roleMe.getMpValue(156);
+        // 同步战斗血量
+        this.fMeSt.x = this.meSp.x; this.fMeHp.x = this.meSp.x - this.statusWidth / 2; this.fMeMp.x = this.meSp.x - this.statusWidth / 2;
+        this.fRSt.x = this.rSp.x; this.fRHp.x = this.rSp.x - this.statusWidth / 2; this.fRMp.x = this.rSp.x - this.statusWidth / 2;
+        this.fMeSt.y = this.meSp.y; this.fMeHp.y = this.meSp.y; this.fMeMp.y = this.meSp.y;
+        this.fRSt.y = this.rSp.y; this.fRHp.y = this.rSp.y; this.fRMp.y = this.rSp.y;
+        this.fMeHp.width = this.roleMe.getHpValue(this.statusWidth);
+        this.fMeMp.width = this.roleMe.getMpValue(this.statusWidth);
+        this.fRHp.width = this.roleR.getHpValue(this.statusWidth);
+        this.fRMp.width = this.roleR.getMpValue(this.statusWidth);
+        Text.UpdateTxtPo(this.meSp, 'up', 20, {fontSize: 10}, this.fMeName);
+        Text.UpdateTxtPo(this.rSp, 'up', 20, {fontSize: 10}, this.fRName);
     }
     fighting(fightBg, roleMe, roleR, func) {
         this.imgs = {}
         this.says = []
-        this.sayCount = 10;
-        this.sayLineHeight = 14;
         this.curBack = func;
+        this.roleMe = roleMe
+        this.roleR = roleR
         this.initView(fightBg, roleMe);
         this.initRole(roleMe, roleR);
+        scene.timer(delta => this.gameLoop(delta));
     }
     fightingTimes(fightBg, roleMe, roles, times, func) {
         let self = this
@@ -237,8 +311,8 @@ class FightPane {
             if (ext === 'rootpath') url = img;
             else url = `./res/${img}.${ext}`
         }
-        // console.log(name, url);
-        // console.log(po);
+        console.log(name, url);
+        console.log(po);
         let sp = Sprite.create(scene, this.name, url, po, size, anc);
         this.imgs[name] = sp;
         return sp;
@@ -263,6 +337,7 @@ class FightPane {
             scene.remove(this.says[i], this.name);
         }
         this.says = {}
+        scene.clearTimer();
     }
 }
 

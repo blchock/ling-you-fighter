@@ -47,9 +47,17 @@ class Sprite {
     }
     sp.x = po.x;
     sp.y = po.y;
-    if (size) {
-      sp.width = size.w;
-      sp.height = size.h;
+    if (size) { // 可以只指定一边的宽度 另一边自适应
+      if (size.h === undefined) {
+        sp.height = size.w / sp.width * sp.height;
+        sp.width = size.w;
+      } else if (size.w === undefined) {
+        sp.width = size.h / sp.height * sp.width;
+        sp.height = size.h;
+      } else {
+        sp.width = size.w;
+        sp.height = size.h;
+      }
     }
     scene.addChild(sp);
     if (onClick) {

@@ -282,7 +282,7 @@ class Story {
                             draw.show();
                         }
                         scene.show('story');
-                    })
+                    });
                     break;
                 }
                 case 'img': { // 图片 k:名称(任意，可以指定为ME（玩家角色）或role库中角色，如此做则不需要指定pic) v:{pic路径,po坐标,size图片大小（可不指定）,anc锚点(默认0.5图片中心定位),ext如果不是png需指定后缀} po：左上角坐标{x:0,y:0} 满800*600 url:可带相对路径/,相对res目录的

@@ -6,6 +6,7 @@ class Scene { //  extends React.Component
     this.containers = {};
     this.call = {};
     this.data = {};
+    this.tickers = [];
     this.curSceneName = "";
   }
   getScene(name) {
@@ -53,6 +54,13 @@ class Scene { //  extends React.Component
   }
   timer(func) {
     this.app.ticker.add(func); // (delta) => {}
+    this.tickers.push(func);
+  }
+  clearTimer() {
+    this.tickers.forEach(ti => {
+      this.app.ticker.remove(ti);
+    });
+    this.tickers = []
   }
   // storage
   set(key, value) {

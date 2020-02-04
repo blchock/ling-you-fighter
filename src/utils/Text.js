@@ -47,7 +47,7 @@ class Text { //  extends React.Component
     }
     return richText;
   }
-  static createSpTxt(SM, sceneName, sp, str, forward, distance, param, onClick) {
+  static UpdateTxtPo(sp, forward, distance, param, txt) {
     let po = { x: sp.x, y: sp.y }
     switch (forward) {
       case 'up': {
@@ -62,8 +62,17 @@ class Text { //  extends React.Component
         
       }
     }
+    if(txt) {
+      txt.x = po.x - txt.width / 2 // 居中
+      txt.y = po.y
+    }
+    return po
+  }
+  static createSpTxt(SM, sceneName, sp, str, forward, distance, param, onClick) {
+    let po = this.UpdateTxtPo(sp, forward, distance, param)
     let txt = this.create(SM, sceneName, str, po, param, onClick)
     txt.x = txt.x - txt.width / 2 // 居中
+    return txt;
   }
 }
 
