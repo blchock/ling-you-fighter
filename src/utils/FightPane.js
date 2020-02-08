@@ -281,16 +281,41 @@ class FightPane {
         this.fRMp.width = this.roleR.getMpValue(this.statusWidth);
         Text.UpdateTxtPo(this.meSp, 'up', 20, {fontSize: 10}, this.fMeName);
         Text.UpdateTxtPo(this.rSp, 'up', 20, {fontSize: 10}, this.fRName);
+        if (this.waitMe) {
+            return;
+        }
+        if (this.nextRole()) {
+            this.waitMe = true
+        } else {
+            
+        }
     }
     fighting(fightBg, roleMe, roleR, func) {
         this.imgs = {}
         this.says = []
+        this.waitMe = false
+        this.speedM = 0;
+        this.speedR = 0;
         this.curBack = func;
         this.roleMe = roleMe
         this.roleR = roleR
         this.initView(fightBg, roleMe);
         this.initRole(roleMe, roleR);
         scene.timer(delta => this.gameLoop(delta));
+    }
+    nextRole() { // 获取下一个行动者（返回true代表是自己）
+        if(this.speedM === this.speedR === 0) {
+            this.speedM = 1 / this.roleMe.speed;
+            this.speedR = 1 / this.roleR.speed;
+            return this.speedM < this.speedR
+        }
+        let isSpeedM = this.speedM < this.speedR
+        if (isSpeedM) {
+            this.speedM += 1 / this.roleMe.speed;
+        } else {
+            this.speedR += 1 / this.roleR.speed;
+        }
+        return this.speedM < this.speedR;
     }
     fightingTimes(fightBg, roleMe, roles, times, func) {
         let self = this

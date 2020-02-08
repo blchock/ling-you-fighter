@@ -35,6 +35,14 @@ class Role {
         let names = {mage:'法师',warrior:'战士',swordsman:'剑客',assassin:'刺客',monster:'士兵',boss:'BOSS',mageboss:'BOSS'}
         return names[this.classical];
     }
+    randomAction() {
+        let isMage = Math.floor(Math.random() * (this.wisdom + this.power)) > 100
+        if (isMage) { // mage
+
+        } else { // attack
+
+        }
+    }
     static maxHp(level, resist) {
         return Math.pow(level, 3) * resist + 100
     }
