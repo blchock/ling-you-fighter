@@ -25,27 +25,29 @@ class FightPane {
         scene.removeScene(this.name);
     }
     onMage0Btn() {
-        this.say("onMage0Btn");
-        this.meSp.x = this.meSp.x + 10;
-        this.roleMe.hp = this.roleMe.hp - 5;
+        // this.say("onMage0Btn");
+        // this.meSp.x = this.meSp.x + 10;
+        // this.roleMe.hp = this.roleMe.hp - 5;
+        
+        this.waitMe = false
     }
     onMage1Btn() {
-        this.say("onMage1Btn");
-        this.meSp.x = this.meSp.x - 10;
-        this.roleMe.mp = this.roleMe.mp - 5;
+        this.waitMe = false
     }
     onMage2Btn() {
-        this.say("onMage2Btn");
+        this.waitMe = false
     }
     onAtkBtn() {
-        this.say("onAtkBtn");
-        this.meSp.y = this.meSp.y + 10;
-        this.roleMe.hp = this.roleMe.hp - 1;
+        
+        this.waitMe = false
+        // this.say("onAtkBtn");
+        // this.meSp.y = this.meSp.y + 10;
+        // this.roleMe.hp = this.roleMe.hp - 1;
     }
     onUseBtn() {
-        this.say("onUseBtn");
-        this.meSp.y = this.meSp.y - 10;
-        this.roleMe.mp = this.roleMe.mp - 1;
+        // this.say("onUseBtn");
+        // this.meSp.y = this.meSp.y - 10;
+        // this.roleMe.mp = this.roleMe.mp - 1;
     }
     onLeaveBtn() {
         this.clear();
@@ -287,6 +289,7 @@ class FightPane {
         if (this.nextRole()) {
             this.waitMe = true
         } else {
+            let injured = this.roleMe.beAttacked(this.roleR.attack());
             
         }
     }

@@ -35,13 +35,26 @@ class Role {
         let names = {mage:'法师',warrior:'战士',swordsman:'剑客',assassin:'刺客',monster:'士兵',boss:'BOSS',mageboss:'BOSS'}
         return names[this.classical];
     }
-    randomAction() {
-        let isMage = Math.floor(Math.random() * (this.wisdom + this.power)) > 100
-        if (isMage) { // mage
-
-        } else { // attack
-
+    // 普通进攻计算
+    attack() {
+        let isMagician = (this.classical === 'mage' || this.classical === 'mageboss');
+        let isCrit = Math.random() < this.crit; // 是否暴击
+        let atk = this.power;
+        if (isMagician) atk = this.wisdom;
+        let aggressivity = atk * this.level + this.weapon.attr.atk * this.weapon.attr.star;
+        if (isCrit) {
+            aggressivity = aggressivity * this.criticalDamage;
+        } else {
+            aggressivity = aggressivity * (Math.random() * 0.1 + 0.95);
         }
+        return aggressivity;
+    }
+    // 被攻击计算实际伤害
+    beAttacked(aggressivity) {
+        let def = this.resist * this.level + this.weapon.attr.def * this.weapon.attr.star;
+        let injure = aggressivity - def * (Math.random() * 0.1 + 0.9);
+        if (injure < 0) injure = 0;
+        return injure;
     }
     static maxHp(level, resist) {
         return Math.pow(level, 3) * resist + 100
@@ -75,7 +88,10 @@ class Role {
                 chapter: 0,
                 line: 0,
                 pid: 0
-            }
+            },
+            crit: Math.random() * 0.5, // 暴击率
+            criticalDamage: Math.random() * 1.5 + 1.5, // 暴击伤害
+            spells: [] // 技能（通过副本获得）
         }
         let weapon = {}
         switch (data.classical) {
@@ -132,6 +148,12 @@ class Role {
                 break
             }
             case 'monster': {
+                weapon.name = '';
+                weapon.attr = { // 武器能力
+                    star: 1,
+                    atk: 0,
+                    def: 0
+                }
                 data.wisdom = Math.floor(Math.random() * 10) + 0;
                 data.power = Math.floor(Math.random() * 70) + 30;
                 data.speed = Math.floor(Math.random() * 50) + 50;
