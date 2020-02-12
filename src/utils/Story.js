@@ -1,4 +1,5 @@
 import Role from '../utils/Role';
+import Com from '../utils/Com';
 import Text from '../utils/Text';
 import Sprite from '../utils/Sprite';
 import DrawPane from '../utils/DrawPane';
@@ -165,7 +166,7 @@ class Story {
     showTitle(title) {
         scene.set('pause', true)
         let self = this
-        let fsize = title.gblen() / 2 * 36 / 2;
+        let fsize = Com.gblen(title) / 2 * 36 / 2;
         let titleCtl = Text.create(scene, 'title', title, { x: scene.size().w / 2 - fsize, y: scene.size().h / 2 - 50 }, true);
         scene.show('title');
         draw.clear();
@@ -198,7 +199,7 @@ class Story {
     }
     splitsTxt(str, flag) { // 根据长度分割字符串
         let arr = [];
-        for (let i = 0, len = str.gblen() / 2 / flag; i < len; i++) {
+        for (let i = 0, len = Com.gblen(str) / 2 / flag; i < len; i++) {
             let str1 = str.substr(0, flag);
             str = str.replace(str1, '');
             arr.push(str1)
@@ -242,7 +243,7 @@ class Story {
                         Me.chapter.pid++;
                     }
                     if (roleName) {
-                        let nameW = roleName.gblen() * storyFontSize / 2 + storyLineHeight + storyMargin[3]
+                        let nameW = Com.gblen(roleName) * storyFontSize / 2 + storyLineHeight + storyMargin[3]
                         self.storyBoard.push(Text.create(scene, 'story', roleName, { x: storyMargin[3], y: (Me.chapter.pid - 1) * storyLineHeight + storyMargin[0] }, { fill: textColor, stroke: roleColor, strokeThickness: 2, fontSize: storyFontSize }));
                         let lineFont = Math.floor((scene.size().w - storyMargin[1] - nameW) / storyFontSize);
                         let txts = self.splitsTxt(txt, lineFont);

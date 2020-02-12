@@ -1,7 +1,9 @@
 import * as PIXI from 'pixi.js';
 import Sprite from '../utils/Sprite';
 import Text from '../utils/Text';
+import Charm from '../utils/Charm';
 let scene;
+let Ani;
 class FightPane {
     constructor(sc) {
         scene = sc;
@@ -14,6 +16,7 @@ class FightPane {
         this.sayMargin = 5;
         this.statusWidth = 80;
         this.curBack = null;
+        Ani = new Charm(PIXI);
     }
     hide() {
         scene.hide(this.name);
@@ -38,7 +41,10 @@ class FightPane {
         this.waitMe = false
     }
     onAtkBtn() {
-        
+        // http://www.xampp.cc/archives/5259
+        // https://github.com/kittykatattack/charm
+        // 使精灵用120帧从原始位置移动到坐标为(128,128)的位置的关键代码
+        Ani.slide(this.meSp, 128, 128, 120);
         this.waitMe = false
         // this.say("onAtkBtn");
         // this.meSp.y = this.meSp.y + 10;
@@ -269,6 +275,7 @@ class FightPane {
         this.insert('fRName', this.fRName);
     }
     gameLoop(delta) {
+        Ani.update(); // 执行补间动画
         // 同步玩家信息
         this.hpBar.width = this.roleMe.getHpValue(196);
         this.mpBar.width = this.roleMe.getMpValue(156);
@@ -290,7 +297,7 @@ class FightPane {
             this.waitMe = true
         } else {
             let injured = this.roleMe.beAttacked(this.roleR.attack());
-            
+            console.log("injured:",injured)
         }
     }
     fighting(fightBg, roleMe, roleR, func) {
