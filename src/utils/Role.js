@@ -54,7 +54,17 @@ class Role {
         let def = this.resist * this.level + this.weapon.attr.def * this.weapon.attr.star;
         let injure = aggressivity - def * (Math.random() * 0.1 + 0.9);
         if (injure < 0) injure = 0;
-        return injure;
+        return Math.ceil(injure);
+    }
+    // 受伤（返回是否死亡）
+    injured(ihp) {
+        this.hp = this.hp - ihp;
+        if(this.hp < 0)
+        {
+            this.hp = 0;
+            return true;
+        }
+        return false;
     }
     static maxHp(level, resist) {
         return Math.pow(level, 3) * resist + 100

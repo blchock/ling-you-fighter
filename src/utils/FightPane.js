@@ -28,34 +28,74 @@ class FightPane {
         scene.removeScene(this.name);
     }
     onMage0Btn() {
+        if(!this.canDo) return;
         // this.say("onMage0Btn");
         // this.meSp.x = this.meSp.x + 10;
         // this.roleMe.hp = this.roleMe.hp - 5;
-        
+        this.menuVisible(false)
         this.waitMe = false
     }
     onMage1Btn() {
+        if(!this.canDo) return;
+        this.menuVisible(false)
         this.waitMe = false
     }
     onMage2Btn() {
+        if(!this.canDo) return;
+        this.menuVisible(false)
         this.waitMe = false
     }
     onAtkBtn() {
+        if(!this.canDo) return;
         // http://www.xampp.cc/archives/5259
         // https://github.com/kittykatattack/charm
         // 使精灵用120帧从原始位置移动到坐标为(128,128)的位置的关键代码
-        Ani.slide(this.meSp, 128, 128, 120);
-        this.waitMe = false
-        // this.say("onAtkBtn");
-        // this.meSp.y = this.meSp.y + 10;
-        // this.roleMe.hp = this.roleMe.hp - 1;
+        let _this = this;
+        _this.canDo = false;
+        _this.menuVisible(false);
+        Ani.sequene(this.meSp, [
+            { slide: [this.meSp.x + 300, this.meSp.y, 30] },
+            {
+                func: () => {
+                    let injured = _this.roleR.beAttacked(_this.roleMe.attack());
+                    _this.say(`[${_this.roleMe.name}] 对 [${_this.roleR.name}] 造成了${injured}点伤害!`,'#0F0');
+                    if (_this.roleR.injured(injured)) {
+                        _this.win();
+                    }
+                },
+                slide: [this.meSp.x, this.meSp.y, 30]
+            }
+        ], () => {
+            _this.canDo = true;
+            _this.waitMe = false
+        });
+    }
+    win() {
+        // 获胜！
+        console.log('win!')
+        // 显示成功界面
+        this.clear();
+        if (this.curBack) this.curBack();
+    }
+    lose() {
+        // 失败。
+        console.log('lose!')
+        // 显示失败界面
+        this.clear();
+        // if (this.curBack) this.curBack();
+        scene.get('removeStoryFunc')();
+        scene.removeScene('story');
+        scene.show('entry');
+        scene.set('pause', false);
     }
     onUseBtn() {
+        if(!this.canDo) return;
         // this.say("onUseBtn");
         // this.meSp.y = this.meSp.y - 10;
         // this.roleMe.mp = this.roleMe.mp - 1;
     }
     onLeaveBtn() {
+        if(!this.canDo) return;
         this.clear();
         if (this.curBack) this.curBack();
     }
@@ -197,6 +237,28 @@ class FightPane {
         let b5 = Sprite.createIcon(scene, this.name, 'i_fly', { x: btn5.x, y: btn5.y + 1 }, r * 2, 0, () => { self.onLeaveBtn() });
         let t5 = Text.createSpTxt(scene, this.name, b5, '逃跑', 'down', 0, { fill: '#36648B', fontSize: 10, stroke: '#fff', strokeThickness: 1 });
         this.insert('b5', b5); this.insert('t5', t5);
+        this.menuVisible = (isShow) => {
+            btn0.visible = isShow
+            btn1.visible = isShow
+            btn2.visible = isShow
+            btn3.visible = isShow
+            btn4.visible = isShow
+            btn5.visible = isShow
+            b0.visible = isShow
+            b1.visible = isShow
+            b2.visible = isShow
+            b3.visible = isShow
+            b4.visible = isShow
+            b5.visible = isShow
+            t0.visible = isShow
+            t1.visible = isShow
+            t2.visible = isShow
+            t3.visible = isShow
+            t4.visible = isShow
+            t5.visible = isShow
+            // if (isShow) this.say('轮到你了！');
+            // else this.say(this.roleR.name + '正在思考..');
+        }
         // Text
         let inforTxt = `Lv.${roleMe.level} ${roleMe.getClassicalName()}`;
         let menu_roleName = Text.create(scene, this.name, roleMe.name, { x: po.x + 60, y: po.y + 5 }, { fill: '#000', fontSize: 24, fontWeight: 'bold', stroke: '#fff', strokeThickness: 2 })
@@ -232,7 +294,7 @@ class FightPane {
         // status
         var status = new PIXI.Graphics();
         status.beginFill(0xFFE4C4);
-        status.drawRect( - w / 2 - 1,  - sp.height / 2 - 15, w + 2, 10);
+        status.drawRect(- w / 2 - 1, - sp.height / 2 - 15, w + 2, 10);
         status.endFill();
         status.x = sp.x;
         status.y = sp.y;
@@ -253,7 +315,7 @@ class FightPane {
         mp.x = sp.x - w / 2;
         mp.y = sp.y;
         sc.addChild(mp);
-        return {st: status, hp: hp, mp: mp}
+        return { st: status, hp: hp, mp: mp }
     }
     initRole(roleMe, roleR) {
         let ss = scene.size()
@@ -275,6 +337,7 @@ class FightPane {
         this.insert('fRName', this.fRName);
     }
     gameLoop(delta) {
+        let _this = this;
         Ani.update(); // 执行补间动画
         // 同步玩家信息
         this.hpBar.width = this.roleMe.getHpValue(196);
@@ -288,21 +351,38 @@ class FightPane {
         this.fMeMp.width = this.roleMe.getMpValue(this.statusWidth);
         this.fRHp.width = this.roleR.getHpValue(this.statusWidth);
         this.fRMp.width = this.roleR.getMpValue(this.statusWidth);
-        Text.UpdateTxtPo(this.meSp, 'up', 20, {fontSize: 10}, this.fMeName);
-        Text.UpdateTxtPo(this.rSp, 'up', 20, {fontSize: 10}, this.fRName);
-        if (this.waitMe) {
+        Text.UpdateTxtPo(this.meSp, 'up', 20, { fontSize: 10 }, this.fMeName);
+        Text.UpdateTxtPo(this.rSp, 'up', 20, { fontSize: 10 }, this.fRName);
+        if (this.waitMe || (!this.canDo)) {
             return;
         }
         if (this.nextRole()) {
             this.waitMe = true
+            _this.menuVisible(true)
         } else {
-            let injured = this.roleMe.beAttacked(this.roleR.attack());
-            console.log("injured:",injured)
+            _this.canDo = false;
+            Ani.sequene(this.rSp, [
+                { slide: [this.rSp.x - 300, this.rSp.y, 30] },
+                {
+                    func: () => {
+                        let injured = _this.roleMe.beAttacked(_this.roleR.attack());
+                        _this.say(`[${_this.roleR.name}] 对 [${_this.roleMe.name}] 造成了${injured}点伤害!`,'#F00');
+                        if (_this.roleMe.injured(injured)) {
+                            _this.lose();
+                        }
+                    },
+                    slide: [this.rSp.x, this.rSp.y, 30]
+                }
+            ], () => {
+                _this.canDo = true;
+                _this.menuVisible(true)
+            });
         }
     }
     fighting(fightBg, roleMe, roleR, func) {
         this.imgs = {}
         this.says = []
+        this.canDo = true
         this.waitMe = false
         this.speedM = 0;
         this.speedR = 0;
@@ -310,11 +390,12 @@ class FightPane {
         this.roleMe = roleMe
         this.roleR = roleR
         this.initView(fightBg, roleMe);
+        this.menuVisible(false);
         this.initRole(roleMe, roleR);
         scene.timer(delta => this.gameLoop(delta));
     }
     nextRole() { // 获取下一个行动者（返回true代表是自己）
-        if(this.speedM === this.speedR === 0) {
+        if (this.speedM === this.speedR === 0) {
             this.speedM = 1 / this.roleMe.speed;
             this.speedR = 1 / this.roleR.speed;
             return this.speedM < this.speedR

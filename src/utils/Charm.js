@@ -845,6 +845,47 @@ var Charm = (function () {
         }
       }
     }
+  }, {
+    key: "sequene",
+    value: function sequene(sprite, arr, callback) {
+      var _this = this;
+      let cmdNums = arr.length;
+      let nextSequene;
+      nextSequene = function(cmds, id, maxID, func) {
+        if(id === maxID) {func(); return;}
+        let maxFrame = 0
+        let maxAni = undefined
+        let hasWait = false
+        let finished = false
+        for (const key in cmds[id]) {
+          if (key === 'func') cmds[id][key](sprite)
+          else if (key === 'wait') {
+            hasWait = true
+            _this.wait(cmds[id][key]).then(() => {
+              hasWait = false
+              if (!finished) return;
+              nextSequene(cmds, id+1, maxID, func);
+            })
+          }
+          else {
+            let ani = _this[key](sprite, ...cmds[id][key]);
+            let tframes = ani.totalFrames || ani.tweens[0].totalFrames
+            if (tframes > maxFrame) {
+              maxFrame = tframes
+              maxAni = ani
+            }
+          }
+        }
+        if (maxAni) {
+          maxAni.onComplete = () => {
+            finished = true;
+            if (hasWait) return;
+            nextSequene(cmds, id+1, maxID, func);
+          }
+        } else finished = true;
+      }
+      nextSequene(arr, 0, cmdNums, callback);
+    }
   }]);
 
   return Charm;
